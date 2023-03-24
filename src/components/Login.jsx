@@ -10,28 +10,47 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from "@/theme/theme";
 
 import axios from "axios";
 
+import { Formik, useFormik } from "formik";
+import { SignInFormSchema } from "../schemas/SignInFormSchema";
+
+import { useRouter } from 'next/router'
 
 export default function Login() {
 
-  const theme = createTheme({
-    typography: {
-    fontFamily: 'Raleway, Arial',
-  }
-  })
+
   
-  const [userData, setUserData] = useState([]);
+  const baseURL = "https://reqres.in";
 
-  const baseURL = "https://reqres.in/api/users";
+  const router = useRouter()
 
-  useEffect(() => {
-    axios.get(baseURL).then((response) => {
-      setUserData(response.data)
-    });
-  }, []);
+  const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: SignInFormSchema,
+    onSubmit: async (values, actions) => {
+      console.log("entered password", values.password)
+      try {
+        axios
+        .post(`${baseURL}/api/login`, values)
+        .then((response) => {
+          localStorage.setItem('token', JSON.stringify(response.data))
+      });
+        router.push("/")
+      }
+      catch(err) {
+        actions.resetForm()
+        console.log("🚀 ~ file: Login.jsx:48 ~ onSubmit: ~ err:", err)
+      }
+      
+    }
+  })
 
 
     return (
@@ -52,7 +71,7 @@ export default function Login() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form"  sx={{ mt: 1 }}>  {/* onSubmit={handleSubmit} */}
+          <Box component="form"  onSubmit={handleSubmit} sx={{ mt: 1 }}>  
             <TextField
               margin="normal"
               required
@@ -62,6 +81,13 @@ export default function Login() {
               name="email"
               autoComplete="off" 
               autoFocus
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.email && !values.email}
+              helperText={
+                (errors.email && touched.email) && errors.email
+              }
             />
             <TextField
               margin="normal"
@@ -71,6 +97,13 @@ export default function Login() {
               label="Password"
               type="password"
               id="password"
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              error={touched.password && !values.password}
+              helperText={
+                (errors.password && touched.password) && errors.password
+              }
             />
             <Button
               type="submit"
