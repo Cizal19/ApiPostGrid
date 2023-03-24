@@ -1,4 +1,4 @@
-import react from "react";
+import { useState, useEffect } from "react";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,6 +12,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+import axios from "axios";
+
 
 export default function Login() {
 
@@ -21,6 +23,16 @@ export default function Login() {
   }
   })
   
+  const [userData, setUserData] = useState([]);
+
+  const baseURL = "https://reqres.in/api/users";
+
+  useEffect(() => {
+    axios.get(baseURL).then((response) => {
+      setUserData(response.data)
+    });
+  }, []);
+
 
     return (
     <ThemeProvider theme={theme}>
