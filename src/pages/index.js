@@ -16,11 +16,22 @@ import Container from '@mui/material/Container';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from "@/theme/theme";
+import { useQuery } from "react-query";
+import { getPhotos } from "@/api/getPhotos";
+
+
 
 
 export default function Home() {
 
   const router = useRouter()
+
+  const { data } = useQuery(["post"],getPhotos)
+
+  const photos = data?.data.slice(0, 10)
+  console.log(photos, "photos")
+
+  // console.log(data?.data, "data")
 
   useEffect(()=>{
     const token=localStorage.getItem("token")
@@ -42,7 +53,7 @@ export default function Home() {
       <AppBar position="relative" >
         <Toolbar sx={{justifyContent: 'space-between'}}>
           <Box sx={{ display: 'flex'}}>
-            <PhotoCameraIcon sx={{ mr: 2 }} />
+            <PhotoCameraIcon sx={{ mr: 2, mt: 0.5}} />
             <Typography variant="h6" color="inherit" noWrap>
               Photo Album
             </Typography>
@@ -54,6 +65,7 @@ export default function Home() {
               '&:hover': {
                 backgroundColor: '#fff',
                 color: '#3c52b2',
+                boxShadow: 1
                 }
               }}
             onClick={handleClick}
@@ -95,28 +107,28 @@ export default function Home() {
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {photos?.map((photo) => (
+              <Grid item key={photo.id} xs={12} sm={6} md={4}>
                 <Card
                   sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                 >
                   <CardMedia
                     component="img"
                     sx={{
-                      // 16:9
+                      16:9,
                       pt: '56.25%',
                     }}
-                    image="https://source.unsplash.com/random"
+                    image={photo.url}
                     alt="random"
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Heading
+                      {photo.title}
                     </Typography>
-                    <Typography>
+                    {/* <Typography>
                       This is a media card. You can use this section to describe the
                       content.
-                    </Typography>
+                    </Typography> */}
                   </CardContent>
                   <CardActions>
                     <Button size="small">View</Button>

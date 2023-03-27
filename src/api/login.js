@@ -1,4 +1,3 @@
-import API from './Api/index'
 import axios from 'axios'
 
 export const loginAuth = async (body) => {
@@ -10,3 +9,4 @@ export const loginAuth = async (body) => {
     return err
   }
 }
+
