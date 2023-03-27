@@ -19,14 +19,26 @@ import { Formik, useFormik } from "formik";
 import { SignInFormSchema } from "../schemas/SignInFormSchema";
 
 import { useRouter } from 'next/router'
+import { useMutation } from "react-query";
+import { loginAuth } from "../api/login"
 
 export default function Login() {
 
+  const {mutate: loginMutation, data:loginData, isSuccess:loginSuccess} = useMutation(loginAuth)
+  console.log("🚀 ~ file: Login.jsx:28 ~ Login ~ loginData:", loginData)
 
   
-  const baseURL = "https://reqres.in";
+  
+  // const baseURL = "https://reqres.in";
 
   const router = useRouter()
+
+  useEffect(()=>{
+    
+    if(loginData?.status === 200) {
+      router.push("/")
+    }
+  }, [loginData?.status, router])
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
     initialValues: {
@@ -34,21 +46,22 @@ export default function Login() {
       password: '',
     },
     validationSchema: SignInFormSchema,
-    onSubmit: async (values, actions) => {
-      console.log("entered password", values.password)
-      try {
-        axios
-        .post(`${baseURL}/api/login`, values)
-        .then((response) => {
-          localStorage.setItem('token', JSON.stringify(response.data))
-      });
-        router.push("/")
-      }
-      catch(err) {
-        actions.resetForm()
-        console.log("🚀 ~ file: Login.jsx:48 ~ onSubmit: ~ err:", err)
-      }
-      
+    onSubmit: (values) => {
+      console.log("🚀 ~ file: Login.jsx:51 ~ Login ~ values:", values)
+      // console.log("entered password", values.password)
+      // try {
+      //   axios
+      //   .post(`${baseURL}/api/login`, values)
+      //   .then((response) => {
+      //     localStorage.setItem('token', JSON.stringify(response.data))
+      //     console.log("🚀 ~ file: Login.jsx:52 ~ .then ~ response:", response)
+      // });
+      // }
+      // catch(err) {
+      //   actions.resetForm()
+      //   console.log("🚀 ~ file: Login.jsx:48 ~ onSubmit: ~ err:", err)
+      // }
+      loginMutation(values)
     }
   })
 
