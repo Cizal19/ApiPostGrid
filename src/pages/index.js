@@ -14,12 +14,12 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Container from '@mui/material/Container';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import Pagination from '@mui/material/Pagination';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from "@/theme/theme";
 import { useQuery } from "react-query";
 import { getPhotos } from "@/api/getPhotos";
-
-
+import usePagination from "../utils/pagination"
 
 
 export default function Home() {
@@ -28,10 +28,23 @@ export default function Home() {
 
   const { data } = useQuery(["post"],getPhotos)
 
-  const photos = data?.data.slice(0, 10)
+  const photos = data?.data.slice(0, 240)
   console.log(photos, "photos")
 
+  // const pageCount = photos.length / 24
+  // console.log("🚀 ~ file: index.js:36 ~ Home ~ pageCount:", pageCount)
+
   // console.log(data?.data, "data")
+  let [page, setPage] = useState(1);
+  const PER_PAGE = 24;
+
+  const pageCount = Math.ceil(photos?.length / PER_PAGE);
+  const _DATA = usePagination(photos, PER_PAGE);
+
+  const handleChange = (e, p) => {
+    setPage(p);
+    _DATA.jump(p);
+  };
 
   useEffect(()=>{
     const token=localStorage.getItem("token")
@@ -44,8 +57,6 @@ export default function Home() {
     localStorage.removeItem("token")
     router.push("/login")
   }
-
-  const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   return (
     <ThemeProvider theme={theme}>
@@ -104,10 +115,13 @@ export default function Home() {
             </Stack>
           </Container>
         </Box>
+        <Grid container justifyContent="center">
+          <Pagination page={page }count={pageCount} color="primary" onChange={handleChange}/>
+         </Grid>
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {photos?.map((photo) => (
+            {_DATA.currentData()?.map((photo) => (
               <Grid item key={photo.id} xs={12} sm={6} md={4}>
                 <Card
                   sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
@@ -116,7 +130,6 @@ export default function Home() {
                     component="img"
                     sx={{
                       16:9,
-                      pt: '56.25%',
                     }}
                     image={photo.url}
                     alt="random"
@@ -139,6 +152,9 @@ export default function Home() {
             ))}
           </Grid>
         </Container>
+        <Grid container justifyContent="center">
+          <Pagination count={pageCount} color="primary" />
+         </Grid>
       </main>
       {/* Footer */}
       <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
