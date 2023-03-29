@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Typography } from "@mui/material";
+import { Modal, Typography } from "@mui/material";
 import Button from '@mui/material/Button';
 import { useRouter } from "next/router"
 import AppBar from '@mui/material/AppBar';
@@ -20,7 +20,7 @@ import { theme } from "@/theme/theme";
 import { useQuery } from "react-query";
 import { getPhotos } from "@/api/getPhotos";
 import usePagination from "../utils/pagination"
-
+import Image from "next/image";
 
 export default function Home() {
 
@@ -28,7 +28,7 @@ export default function Home() {
 
   const { data } = useQuery(["post"],getPhotos)
 
-  const photos = data?.data.slice(0, 240)
+  const photos = data?.data.slice(0, 500)
   console.log(photos, "photos")
 
   // const pageCount = photos.length / 24
@@ -46,6 +46,9 @@ export default function Home() {
     _DATA.jump(p);
   };
 
+  const [modalOpen, setOpenModal] = useState(false)
+  const [modalImageId, setModalImageId] = useState(0)
+
   useEffect(()=>{
     const token=localStorage.getItem("token")
     if(!token) {
@@ -57,6 +60,18 @@ export default function Home() {
     localStorage.removeItem("token")
     router.push("/login")
   }
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 400,
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 4,
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -116,7 +131,7 @@ export default function Home() {
           </Container>
         </Box>
         <Grid container justifyContent="center">
-          <Pagination page={page }count={pageCount} color="primary" onChange={handleChange}/>
+          <Pagination page={page}count={pageCount} color="primary" onChange={handleChange}/>
          </Grid>
         <Container sx={{ py: 8 }} maxWidth="md">
           {/* End hero unit */}
@@ -138,13 +153,17 @@ export default function Home() {
                     <Typography gutterBottom variant="h5" component="h2">
                       {photo.title}
                     </Typography>
-                    {/* <Typography>
-                      This is a media card. You can use this section to describe the
-                      content.
-                    </Typography> */}
                   </CardContent>
                   <CardActions>
-                    <Button size="small">View</Button>
+                    <Button 
+                      size="small"
+                      onClick={() => {
+                        setOpenModal(true)
+                        setModalImageId(photo.id)
+                      }}
+                    >
+                      View
+                    </Button>
                     <Button size="small">Edit</Button>
                   </CardActions>
                 </Card>
@@ -153,7 +172,7 @@ export default function Home() {
           </Grid>
         </Container>
         <Grid container justifyContent="center">
-          <Pagination count={pageCount} color="primary" />
+          <Pagination page={page}count={pageCount} color="primary" onChange={handleChange}/>
          </Grid>
       </main>
       {/* Footer */}
@@ -171,6 +190,22 @@ export default function Home() {
         </Typography>
       </Box>
       {/* End footer */}
+      {/* Modal */}
+      <Modal
+        open={modalOpen}
+        onClose={() => setOpenModal(false)}
+      >
+        <CardMedia
+            component="img"
+            sx={{
+              margin: "auto",
+              height: 600,
+              width: 600
+            }}
+            image={photos[modalImageId - 1]?.url}
+            alt="random"
+        />
+      </Modal>
     </ThemeProvider>
   );
 }

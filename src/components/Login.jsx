@@ -12,9 +12,6 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { ThemeProvider } from '@mui/material/styles';
 import { theme } from "@/theme/theme";
-
-import axios from "axios";
-
 import { Formik, useFormik } from "formik";
 import { SignInFormSchema } from "../schemas/SignInFormSchema";
 
@@ -25,11 +22,6 @@ import { loginAuth } from "../api/login"
 export default function Login() {
 
   const {mutate: loginMutation, data:loginData, isSuccess:loginSuccess} = useMutation(loginAuth)
-  console.log("🚀 ~ file: Login.jsx:28 ~ Login ~ loginData:", loginData)
-
-  
-  
-  // const baseURL = "https://reqres.in";
 
   const router = useRouter()
 
@@ -52,19 +44,6 @@ export default function Login() {
     },
     validationSchema: SignInFormSchema,
     onSubmit: (values) => {
-      // console.log("entered password", values.password)
-      // try {
-      //   axios
-      //   .post(`${baseURL}/api/login`, values)
-      //   .then((response) => {
-      //     localStorage.setItem('token', JSON.stringify(response.data))
-      //     console.log("🚀 ~ file: Login.jsx:52 ~ .then ~ response:", response)
-      // });
-      // }
-      // catch(err) {
-      //   actions.resetForm()
-      //   console.log("🚀 ~ file: Login.jsx:48 ~ onSubmit: ~ err:", err)
-      // }
       loginMutation(values)
     }
   })
