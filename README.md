@@ -1,5 +1,19 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+# Photo Album
+
+A photo album app created with Material UI. This app was made while learning different HTTPS methods.
+
+## Demo
+Here is a working live demo : https://api-post-grid-8o8m.vercel.app/
+
+## App
+
+- The landing page of the app is the login page.
+- The app employs a HOC to protect the home page.
+- The Home page is a photo album, which shows consists of cards to show the photos and their names.
+- Upon clicking the photo or the view button, image is shown on full screen. 
+
 ## Getting Started
 
 First, run the development server:
