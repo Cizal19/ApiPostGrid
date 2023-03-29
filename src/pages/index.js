@@ -20,7 +20,6 @@ import { theme } from "@/theme/theme";
 import { useQuery } from "react-query";
 import { getPhotos } from "@/api/getPhotos";
 import usePagination from "../utils/pagination"
-import Image from "next/image";
 
 export default function Home() {
 
@@ -31,10 +30,6 @@ export default function Home() {
   const photos = data?.data.slice(0, 500)
   console.log(photos, "photos")
 
-  // const pageCount = photos.length / 24
-  // console.log("🚀 ~ file: index.js:36 ~ Home ~ pageCount:", pageCount)
-
-  // console.log(data?.data, "data")
   let [page, setPage] = useState(1);
   const PER_PAGE = 24;
 
@@ -47,7 +42,7 @@ export default function Home() {
   };
 
   const [modalOpen, setOpenModal] = useState(false)
-  const [modalImageId, setModalImageId] = useState(0)
+  const [modalImageId, setModalImageId] = useState()
 
   useEffect(()=>{
     const token=localStorage.getItem("token")
@@ -73,6 +68,7 @@ export default function Home() {
     p: 4,
   };
 
+  console.log(modalImageId, "imageid")
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -125,8 +121,8 @@ export default function Home() {
               spacing={2}
               justifyContent="center"
             >
-              <Button variant="contained">Main call to action</Button>
-              <Button variant="outlined">Secondary action</Button>
+              {/* <Button variant="contained">Main call to action</Button>
+              <Button variant="outlined">Secondary action</Button> */}
             </Stack>
           </Container>
         </Box>
@@ -148,6 +144,9 @@ export default function Home() {
                     }}
                     image={photo.url}
                     alt="random"
+                    onClick={() =>{ setOpenModal(true)
+                      setModalImageId(photo.id)}
+                    }
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography gutterBottom variant="h5" component="h2">
@@ -164,7 +163,7 @@ export default function Home() {
                     >
                       View
                     </Button>
-                    <Button size="small">Edit</Button>
+                    {/* <Button size="small">Edit</Button> */}
                   </CardActions>
                 </Card>
               </Grid>
@@ -202,7 +201,7 @@ export default function Home() {
               height: 600,
               width: 600
             }}
-            image={photos[modalImageId - 1]?.url}
+            image={photos?.[modalImageId - 1]?.url}
             alt="random"
         />
       </Modal>
