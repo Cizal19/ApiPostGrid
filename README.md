@@ -6,8 +6,8 @@ A photo album app created with Material UI. This app was made while learning dif
 
 ## Demo
 Here is a working live demo : https://api-post-grid-8o8m.vercel.app/ 
-Use email: eve.holt@reqres.in
-    password: Apple123
+<br>
+Use email: eve.holt@reqres.in   password: Apple123
 
 ## App
 
