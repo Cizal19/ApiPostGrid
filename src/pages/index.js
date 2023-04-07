@@ -28,7 +28,6 @@ export default function Home() {
   const { data } = useQuery(["post"],getPhotos)
 
   const photos = data?.data.slice(0, 500)
-  console.log(photos, "photos")
 
   let [page, setPage] = useState(1);
   const PER_PAGE = 24;
@@ -68,7 +67,7 @@ export default function Home() {
     p: 4,
   };
 
-  console.log(modalImageId, "imageid")
+  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />

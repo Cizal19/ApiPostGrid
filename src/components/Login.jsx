@@ -19,11 +19,40 @@ import { useRouter } from 'next/router'
 import { useMutation } from "react-query";
 import { loginAuth } from "../api/login"
 
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function Login() {
 
   const {mutate: loginMutation, data:loginData, isSuccess:loginSuccess} = useMutation(loginAuth)
 
   const router = useRouter()
+
+  const successNotify = () => {
+    toast.success('Signed in successfully', {
+      position: "bottom-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined,
+      theme: "dark",
+    });
+  }
+
+  const errorNotify = () => {
+    toast.error('Invalid Email or Password', {
+      position: "bottom-center",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: false,
+      pauseOnHover: true,
+      draggable: false,
+      progress: undefined,
+      theme: "dark",
+    });
+  }
 
   useEffect(()=>{
     
@@ -32,9 +61,15 @@ export default function Login() {
     }
     
     if(loginData?.status === 200) {
-      router.push("/")
+      successNotify()
       localStorage.setItem('token', JSON.stringify(loginData))
+      setTimeout(() => {
+        router.push("/");
+      }, 1500);  
+    } else if(loginData?.response?.status === 400) {
+      errorNotify()
     }
+
   }, [loginData, loginData?.status, router])
 
   const { values, errors, touched, handleBlur, handleChange, handleSubmit } = useFormik({
@@ -123,6 +158,7 @@ export default function Login() {
           </Grid>
         </Box>
       </Box>
+      <ToastContainer />
     </Container>
     </ThemeProvider>
   )
